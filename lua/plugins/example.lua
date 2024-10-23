@@ -1,7 +1,8 @@
 -- since this is just an example spec, don't actually load anything here and return an empty spec
 -- stylua: ignore
 if true then return {
-  { 'ThePrimeagen/vim-be-good' }
+  { 'ThePrimeagen/vim-be-good' },
+  { "savq/melange-nvim" }
 } end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
