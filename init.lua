@@ -2,7 +2,10 @@ vim.g.mapleader = " "
 
 -- keymap
 
+vim.keymap.set("n", "U", "<C-r>", { desc = "Redo" })
+
 -- Window: <leader>w 
+vim.keymap.set("n", "<leader>w\\", ":vsplit<CR>", { desc = "Vertical split" })
 vim.keymap.set("n", "<leader>w|", ":vsplit<CR>", { desc = "Vertical split" })
 vim.keymap.set("n", "<leader>w-", ":split<CR>", { desc = "Horizontal split" })
 vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "Nav. window left" })
@@ -22,7 +25,6 @@ vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { desc = "Lazy menu"})
 vim.keymap.set("n", "<leader>pm", ":Mason<CR>", { desc = "Mason menu"})
 
 -- Terminal mappings
-
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode"})
 
 -- Window navigation from terminal mode
@@ -31,7 +33,11 @@ vim.keymap.set("t", "<leader>wl", "<C-\\><C-n><C-w>l", { desc = "Nav. window rig
 vim.keymap.set("t", "<leader>wj", "<C-\\><C-n><C-w>j", { desc = "Nav. window down" })
 vim.keymap.set("t", "<leader>wk", "<C-\\><C-n><C-w>k", { desc = "Nav. window up" })
 
--- tab settings
+-- Buffer
+vim.keymap.set("n", "<leader>bn", ":enew<CR>", { desc = "New buffer" })
+vim.keymap.set("n", "<leader>bd", ":bd<CR>", { desc = "Delete buffer" })
+
+-- tab (file tabs) settings
 vim.opt.tabstop = 2        -- how wide a tab character looks
 vim.opt.shiftwidth = 2     -- how wide >> and auto-indent indent
 vim.opt.expandtab = true   -- use spaces instead of tab characters
@@ -46,6 +52,9 @@ vim.opt.shell = "pwsh"
 vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
 vim.opt.shellquote = ""
 vim.opt.shellxquote = ""
+
+-- Clipboard
+vim.opt.clipboard = "unnamedplus"
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

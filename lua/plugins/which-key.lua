@@ -9,6 +9,8 @@ return {
 		  { "<leader>w", group = "windows" },
       { "<leader>d", group = "debug" },
       { "<leader>p", group = "plugins" },
+      { "<leader>b", group = "buffer" },
+      { "<leader>t", group = "tabs" },
 		})
   end,
 }
