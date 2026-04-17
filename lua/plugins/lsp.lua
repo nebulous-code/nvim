@@ -28,7 +28,15 @@ return {
     config = function()
       vim.lsp.config("ts_ls", {})
       vim.lsp.config("pyright", {})
-      vim.lsp.config("lua_ls", {})
+      vim.lsp.config("lua_ls", {
+	settings = {
+		Lua = {
+			diagnostics = {
+				globals = {"vim"},
+			}
+		}
+	}
+      })
       vim.lsp.config("rust_analyzer", {})
 
       vim.lsp.enable("ts_ls")

@@ -7,6 +7,8 @@ return {
 	  wk.add({
 		  { "<leader>f", group = "find" },
 		  { "<leader>w", group = "windows" },
+      { "<leader>d", group = "debug" },
+      { "<leader>p", group = "plugins" },
 		})
   end,
 }
