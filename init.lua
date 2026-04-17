@@ -21,6 +21,16 @@ vim.keymap.set("n", "<leader>d[", vim.diagnostic.goto_prev, { desc = "Previous d
 vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { desc = "Lazy menu"})
 vim.keymap.set("n", "<leader>pm", ":Mason<CR>", { desc = "Mason menu"})
 
+-- Terminal mappings
+
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode"})
+
+-- Window navigation from terminal mode
+vim.keymap.set("t", "<leader>wh", "<C-\\><C-n><C-w>h", { desc = "Nav. window left" })
+vim.keymap.set("t", "<leader>wl", "<C-\\><C-n><C-w>l", { desc = "Nav. window right" })
+vim.keymap.set("t", "<leader>wj", "<C-\\><C-n><C-w>j", { desc = "Nav. window down" })
+vim.keymap.set("t", "<leader>wk", "<C-\\><C-n><C-w>k", { desc = "Nav. window up" })
+
 -- tab settings
 vim.opt.tabstop = 2        -- how wide a tab character looks
 vim.opt.shiftwidth = 2     -- how wide >> and auto-indent indent
@@ -30,6 +40,12 @@ vim.opt.smartindent = true -- auto-indent based on language syntax
 -- line numbers
 vim.opt.number = true           -- shows actual line number on current line
 vim.opt.relativenumber = true   -- shows relative numbers on all other lines
+
+-- shell settings
+vim.opt.shell = "pwsh"
+vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
+vim.opt.shellquote = ""
+vim.opt.shellxquote = ""
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
