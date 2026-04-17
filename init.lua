@@ -48,10 +48,14 @@ vim.opt.number = true           -- shows actual line number on current line
 vim.opt.relativenumber = true   -- shows relative numbers on all other lines
 
 -- shell settings
-vim.opt.shell = "pwsh"
-vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
-vim.opt.shellquote = ""
-vim.opt.shellxquote = ""
+if vim.fn.has("win32") == 1 then
+  vim.opt.shell = "pwsh"
+  vim.opt.shellcmdflag = "-NoLogo -Command"
+  vim.opt.shellquote = ""
+  vim.opt.shellxquote = ""
+else
+  vim.opt.shell = "zsh"
+end
 
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"
