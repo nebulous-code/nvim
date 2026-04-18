@@ -25,6 +25,7 @@ vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { desc = "Lazy menu"})
 vim.keymap.set("n", "<leader>pm", ":Mason<CR>", { desc = "Mason menu"})
 
 -- Terminal mappings
+vim.keymap.set("n", "<leader>t", ":terminal<CR>", { desc = "Terminal"})
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode"})
 
 -- Window navigation from terminal mode
