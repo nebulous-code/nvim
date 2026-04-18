@@ -21,7 +21,7 @@ return {
       dashboard.button("e", "  File Explorer",    ":NvimTreeToggle<CR>"),
       dashboard.button("f", "  Search Files",    ":Telescope find_files<CR>"),
       dashboard.button("r", "  Recent files", ":Telescope oldfiles<CR>"),
-      dashboard.button("g", "  Find text",    ":Telescope live_grep<CR>"),
+      dashboard.button("d", "  Find detailed text",    ":Telescope live_grep<CR>"),
       dashboard.button("n", "  New file",     ":enew<CR>"),
       dashboard.button("q", "  Quit",         ":qa<CR>"),
     }

@@ -11,6 +11,7 @@ return {
       { "<leader>p", group = "plugins" },
       { "<leader>b", group = "buffer" },
       { "<leader>t", group = "tabs" },
+      { "<leader>g", group = "git" },
 		})
   end,
 }
