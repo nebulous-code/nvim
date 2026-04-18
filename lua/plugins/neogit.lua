@@ -9,6 +9,17 @@ return {
       integrations = {
         diffview = true,
       },
+      mappings = {
+        popup = {
+          ["<tab>"] = "LogPopup",
+          ["l"] = false,
+        },
+        status = {
+          ["l"] = "Toggle",
+          ["h"] = "Toggle",
+          ["<tab>"] = false,
+        }
+      }
     })
 
     vim.keymap.set("n", "<leader>gg", ":Neogit<CR>", { desc = "Neogit" })
