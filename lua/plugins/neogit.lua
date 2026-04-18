@@ -10,6 +10,10 @@ return {
         diffview = true,
       },
       mappings = {
+        commit_editor = {
+          ["<leader>c"] = "Submit",
+          ["<leader>q"] = "Abort",
+        },
         popup = {
           ["<tab>"] = "LogPopup",
           ["l"] = false,
