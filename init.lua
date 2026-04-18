@@ -21,8 +21,13 @@ vim.keymap.set("n", "<leader>d]", vim.diagnostic.goto_next, { desc = "Next diagn
 vim.keymap.set("n", "<leader>d[", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 
 -- Plugins
-vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { desc = "Lazy menu"})
-vim.keymap.set("n", "<leader>pm", ":Mason<CR>", { desc = "Mason menu"})
+vim.keymap.set("n", "<leader>Pl", ":Lazy<CR>", { desc = "Lazy menu"})
+vim.keymap.set("n", "<leader>Pm", ":Mason<CR>", { desc = "Mason menu"})
+
+-- Put (with new line) 
+vim.keymap.set("n", "<leader>po", "O<Esc>p", { desc = "Put on new line above"})
+vim.keymap.set("n", "<leader>pp", "o<Esc>p", { desc = "Put on new line below"})
+
 
 -- Terminal mappings
 vim.keymap.set("n", "<leader>t", ":terminal<CR>", { desc = "Terminal"})
