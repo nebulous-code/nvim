@@ -16,13 +16,13 @@ return {
           end
           -- for terminals, extract the buffer name from the path
           local name = (buf.name or buf.path or ""):lower()
-          if string.find(name, "claude") then
+          if name:match("claude.term") then
             return "", "BufferIconClaude"
-          elseif string.find(name, "api") then
+          elseif name:match("api.term") then
             return "󰒍", "BufferIconApi"
-          elseif string.find(name, "frontend") then
+          elseif name:match("frontend.term") then
             return "󰖟", "BufferIconFrontend"
-          elseif string.find(name, "term") then
+          elseif name:match(".term") then
             return "", "BufferIconTerminal"
           end
           local icon, color = require("nvim-web-devicons").get_icon(buf.name, buf.extension)
