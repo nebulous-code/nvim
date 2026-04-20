@@ -1,3 +1,4 @@
+
 vim.g.mapleader = " "
 
 -- keymap
@@ -42,6 +43,8 @@ vim.keymap.set("t", "<leader>wk", "<C-\\><C-n><C-w>k", { desc = "Nav. window up"
 -- Buffer
 vim.keymap.set("n", "<leader>bn", ":enew<CR>", { desc = "New buffer" })
 vim.keymap.set("n", "<leader>bd", ":bd<CR>", { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>b!", ":bd!<CR>", { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>br", ":file ", { desc = "Rename buffer" })
 
 -- tab (file tabs) settings
 vim.opt.tabstop = 2        -- how wide a tab character looks
