@@ -37,13 +37,8 @@ vim.keymap.set("n", "<leader>pp", "o<Esc>p", { desc = "Put on new line below"})
 
 -- Terminal mappings
 vim.keymap.set("n", "<leader>t", ":terminal<CR>", { desc = "Terminal"})
+vim.keymap.set("t", "<leader><Esc>", "<Esc>", { desc = "Send Esc to terminal"})
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode"})
-
--- Window navigation from terminal mode
-vim.keymap.set("t", "<leader>wh", "<C-\\><C-n><C-w>h", { desc = "Nav. window left" })
-vim.keymap.set("t", "<leader>wl", "<C-\\><C-n><C-w>l", { desc = "Nav. window right" })
-vim.keymap.set("t", "<leader>wj", "<C-\\><C-n><C-w>j", { desc = "Nav. window down" })
-vim.keymap.set("t", "<leader>wk", "<C-\\><C-n><C-w>k", { desc = "Nav. window up" })
 
 -- Buffer
 vim.keymap.set("n", "<leader>bn", ":enew<CR>", { desc = "New buffer" })
