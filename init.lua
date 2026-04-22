@@ -95,3 +95,39 @@ vim.opt.rtp:prepend(lazypath)
 -- Load plugins
 require("lazy").setup("plugins")
 
+local function open_dev_layout()
+  -- Close alpha/current buffer and start fresh
+  vim.cmd("enew")
+    -- Open terminal as a buffer
+  vim.cmd("terminal")
+  vim.cmd("stopinsert")
+  vim.cmd("file terminal")
+  local term_buf = vim.api.nvim_get_current_buf()
+  -- Open claude in buffer
+  vim.cmd("terminal claude --resume")
+  vim.cmd("stopinsert")
+  vim.cmd("file claude.term")
+  -- save claude buffer's id
+  local claude_buf = vim.api.nvim_get_current_buf()
+
+  vim.cmd("vsplit")
+
+  -- Create the blank working buffer
+  -- local work_buf = vim.api.nvim_create_buf(true, false)
+  -- vim.api.nvim_set_current_buf(work_buf)
+
+  -- Defer pinning to give bufferline time to register the buffers
+  vim.defer_fn(function()
+    vim.api.nvim_set_current_buf(term_buf)
+    vim.cmd("BufferLineTogglePin")
+    vim.api.nvim_set_current_buf(claude_buf)
+    vim.cmd("BufferLineTogglePin")
+    vim.cmd("enew")
+    vim.cmd("NvimTreeOpen")
+  end, 200)
+
+end
+
+vim.api.nvim_create_user_command("DevLayout", open_dev_layout, {})
+vim.keymap.set("n", "<leader>D", ":DevLayout<CR>", { desc = "Open dev layout" })-- Dev environment layout
+
