@@ -33,5 +33,9 @@ return {
 
     vim.keymap.set("n", "<leader>bl", ":BufferLineCycleNext<CR>", { desc = "Next buffer" })
     vim.keymap.set("n", "<leader>bh", ":BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
+    vim.keymap.set("n", "<leader>bp", ":BufferLineTogglePin<CR>", { desc = "Pin buffer" })
+    vim.keymap.set("n", "<leader>bP", ":BufferLineGroupClose ungrouped<CR>", { desc = "Close unpinned buffers" })
+    vim.keymap.set("n", "<leader>b>", ":BufferLineMoveNext<CR>", { desc = "Move buffer right" })
+    vim.keymap.set("n", "<leader>b<", ":BufferLineMovePrev<CR>", { desc = "Move buffer left" })
   end,
 }
