@@ -56,6 +56,9 @@ vim.opt.smartindent = true -- auto-indent based on language syntax
 vim.opt.number = true           -- shows actual line number on current line
 vim.opt.relativenumber = true   -- shows relative numbers on all other lines
 
+-- colorize
+vim.opt.termguicolors = true
+
 -- shell settings
 if vim.fn.has("win32") == 1 then
   vim.opt.shell = "pwsh"
