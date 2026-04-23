@@ -5,13 +5,14 @@ return {
 	  local wk = require("which-key")
 	  wk.setup()
 	  wk.add({
-		  { "<leader>f", group = "find" },
-		  { "<leader>w", group = "windows" },
+      { "<leader>b", group = "buffer" },
       { "<leader>d", group = "debug" },
+		  { "<leader>f", group = "find" },
+      { "<leader>g", group = "git" },
+      { "<leader>m", group = "markdown" },
       { "<leader>P", group = "plugins" },
       { "<leader>p", group = "put with newline" },
-      { "<leader>b", group = "buffer" },
-      { "<leader>g", group = "git" },
+		  { "<leader>w", group = "windows" },
 		})
   end,
 }

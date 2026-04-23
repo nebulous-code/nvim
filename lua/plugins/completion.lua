@@ -25,9 +25,10 @@ return {
           ["<C-Space>"] = cmp.mapping.complete(), -- manually trigger
         }),
         sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
           { name = "buffer" },
+          { name = "luasnip" },
+          { name = "mkdnflow" },
+          { name = "nvim_lsp" },
           { name = "path" },
         }),
       })
