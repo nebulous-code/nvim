@@ -73,8 +73,10 @@ if vim.fn.has("win32") == 1 then
   vim.opt.shellcmdflag = "-NoLogo -Command"
   vim.opt.shellquote = ""
   vim.opt.shellxquote = ""
-else
+elseif vim.fn.has("mac") == 1 then 
   vim.opt.shell = "zsh"
+else
+  vim.opt.shell = "bash"
 end
 
 -- Clipboard
