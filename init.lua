@@ -42,9 +42,17 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode"})
 
 -- Buffer
 vim.keymap.set("n", "<leader>bn", ":enew<CR>", { desc = "New buffer" })
-vim.keymap.set("n", "<leader>bd", ":bd<CR>", { desc = "Delete buffer" })
-vim.keymap.set("n", "<leader>b!", ":bd!<CR>", { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>b!", ":bd!<CR>", { desc = "Delete buffer (forced)" })
 vim.keymap.set("n", "<leader>br", ":file ", { desc = "Rename buffer" })
+vim.keymap.set("n", "<leader>bd", function()
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  if #bufs > 1 then
+    vim.cmd("bprevious")
+  else
+    vim.cmd("enew")
+  end
+  vim.cmd("bdelete #")
+end, { desc = "Delete buffer" })
 
 -- tab (file tabs) settings
 vim.opt.tabstop = 2        -- how wide a tab character looks

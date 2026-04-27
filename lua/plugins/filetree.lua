@@ -3,12 +3,15 @@ return {
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
 	require("nvim-tree").setup({
-    	actions = {
-			  open_file = {
-				  window_picker = {
-					  enable = false,
-				},
-			},
+    git = {
+      ignore = false,
+    },
+    actions = {
+		  open_file = {
+			  window_picker = {
+			    enable = false,
+		    },
+		  },
 		},
     renderer = {
       icons = {
