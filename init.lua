@@ -26,6 +26,9 @@ vim.keymap.set("n", "<leader>da", vim.diagnostic.setloclist, { desc = "Show all 
 vim.keymap.set("n", "<leader>d]", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 vim.keymap.set("n", "<leader>d[", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 
+-- Misc
+vim.keymap.set("n", "<leader>/", ":noh<CR>", { desc = "Clear search" })
+
 -- Plugins
 vim.keymap.set("n", "<leader>Pl", ":Lazy<CR>", { desc = "Lazy menu"})
 vim.keymap.set("n", "<leader>Pm", ":Mason<CR>", { desc = "Mason menu"})
