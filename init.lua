@@ -57,6 +57,15 @@ vim.keymap.set("n", "<leader>bd", function()
   vim.cmd("bdelete #")
 end, { desc = "Delete buffer" })
 
+-- Macros
+vim.keymap.set("n", "<leader>q", "q", { desc = "Record macro" })
+vim.keymap.set("n", "q", "<Nop>", { desc = "Disable accidental macro" })
+vim.keymap.set("n", "<leader>rr", "@@", { desc = "Replay last used macro" })
+vim.keymap.set("n", "<leader>ra", "@a", { desc = "Play macro in register a" })
+vim.keymap.set("n", "<leader>rb", "@b", { desc = "Play macro in register b" })
+vim.keymap.set("n", "<leader>rq", "@q", { desc = "Play macro in register q" })
+
+
 -- tab (file tabs) settings
 vim.opt.tabstop = 2        -- how wide a tab character looks
 vim.opt.shiftwidth = 2     -- how wide >> and auto-indent indent
