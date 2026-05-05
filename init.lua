@@ -93,6 +93,7 @@ end
 
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"
+vim.opt.runtimepath:append("~/.local/share/nvim/site")
 
 -- Window Transparency
 vim.api.nvim_set_hl(0, "Normal", {bg = "none"})
