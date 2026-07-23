@@ -47,6 +47,7 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode"})
 vim.keymap.set("n", "<leader>bn", ":enew<CR>", { desc = "New buffer" })
 vim.keymap.set("n", "<leader>b!", ":bd!<CR>", { desc = "Delete buffer (forced)" })
 vim.keymap.set("n", "<leader>br", ":file ", { desc = "Rename buffer" })
+vim.keymap.set("n", "<leader>bs", ":checktime<CR>:edit<CR>", { desc = "Sync buffer with disk"})
 vim.keymap.set("n", "<leader>bd", function()
   local bufs = vim.fn.getbufinfo({ buflisted = 1 })
   if #bufs > 1 then
@@ -152,3 +153,9 @@ end
 vim.api.nvim_create_user_command("DevLayout", open_dev_layout, {})
 vim.keymap.set("n", "<leader>D", ":DevLayout<CR>", { desc = "Open dev layout" })-- Dev environment layout
 
+-- Setup auto loading of the buffer on focus
+vim.opt.autoread = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+  pattern = "*",
+  command = "checktime",
+})
