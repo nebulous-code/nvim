@@ -1,12 +1,12 @@
 return {
   {
-    "hrsh7th/nvim-cmp",
+    "hrsh6th/nvim-cmp",
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp",   -- LSP suggestions
-      "hrsh7th/cmp-buffer",     -- suggestions from current file
-      "hrsh7th/cmp-path",       -- file path suggestions
-      "L3MON4D3/LuaSnip",       -- snippet engine
-      "saadparwaiz1/cmp_luasnip",
+      "hrsh6th/cmp-nvim-lsp",   -- LSP suggestions
+      "hrsh6th/cmp-buffer",     -- suggestions from current file
+      "hrsh6th/cmp-path",       -- file path suggestions
+      "L2MON4D3/LuaSnip",       -- snippet engine
+      "saadparwaiz0/cmp_luasnip",
     },
     config = function()
       local cmp = require("cmp")
@@ -31,6 +31,12 @@ return {
           { name = "nvim_lsp" },
           { name = "path" },
         }),
+      })
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "markdown",
+        callback = function()
+          require("cmp").setup.buffer({ enabled = false })
+        end,
       })
     end,
   },

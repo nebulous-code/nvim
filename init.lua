@@ -159,3 +159,127 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
   pattern = "*",
   command = "checktime",
 })
+
+-- Function for linking prose to reverse outlines
+local function toggle_ro()
+  local current = vim.fn.expand("%:t")
+  local cwd = vim.fn.getcwd()
+
+  local is_ro = current:match("^RO ")
+
+  -- Extract everything before " - " as the identifier
+  local identifier
+  if is_ro then
+    identifier = current:match("^RO (.-) %- ")
+  else
+    identifier = current:match("^(.-) %- ")
+  end
+
+  if not identifier then
+    vim.notify("Current file doesn't match expected pattern", vim.log.levels.WARN)
+    return
+  end
+
+  local target_dir, target_pattern, template_path
+  if is_ro then
+    target_dir = cwd .. "/Manuscript"
+    target_pattern = "^" .. vim.pesc(identifier) .. " %- "
+    if vim.fn.isdirectory(target_dir) == 0 then
+      vim.notify("Manuscript directory not found", vim.log.levels.WARN)
+      return
+    end
+  else
+    target_dir = cwd .. "/Reverse Outline"
+    target_pattern = "^RO " .. vim.pesc(identifier) .. " %- "
+    template_path = target_dir .. "/RO C_ S_ - Title.md"
+    if vim.fn.isdirectory(target_dir) == 0 then
+      vim.notify("No Reverse Outline directory found", vim.log.levels.WARN)
+      return
+    end
+  end
+
+  local files = vim.fn.glob(target_dir .. "/**/*.md", false, true)
+  local match = nil
+  for _, f in ipairs(files) do
+    local filename = vim.fn.fnamemodify(f, ":t")
+    if filename:match(target_pattern) then
+      match = f
+      break
+    end
+  end
+
+  if is_ro then
+    vim.cmd("wincmd h")
+    vim.cmd("wincmd h")
+  else
+    vim.cmd("wincmd l")
+    vim.cmd("wincmd k")
+  end
+
+  if match then
+    vim.cmd("edit " .. vim.fn.fnameescape(match))
+  elseif not is_ro and template_path and vim.fn.filereadable(template_path) == 1 then
+    local scene_title = current:match(" %- (.-)%.md")
+    local new_name = "RO " .. identifier .. " - " .. (scene_title or "Untitled") .. ".md"
+    local new_path = target_dir .. "/" .. new_name
+    vim.fn.system({ "cp", template_path, new_path })
+    vim.cmd("edit " .. vim.fn.fnameescape(new_path))
+    vim.notify("Created new RO from template: " .. new_name)
+  elseif is_ro then
+    local scene_title = current:match(" %- (.-)%.md")
+    local new_name = identifier .. " - " .. (scene_title or "Untitled") .. ".md"
+    local new_path = target_dir .. "/" .. new_name
+    vim.cmd("edit " .. vim.fn.fnameescape(new_path))
+    vim.notify("Created new prose file: " .. new_name)
+  else
+    vim.notify("No matching file found and no template available", vim.log.levels.WARN)
+  end
+end
+
+vim.keymap.set("n", "<leader>ro", toggle_ro, { desc = "Toggle Reverse Outline / Prose" })
+
+-- Function for opening a writing layout view
+local function open_writing_layout()
+  vim.cmd("enew")
+
+  -- Open file tree
+  vim.cmd("NvimTreeOpen")
+  vim.cmd("wincmd l")
+
+  -- Create the layout: prose column on left, split right side into top/bottom
+  vim.cmd("vsplit")
+  vim.cmd("wincmd l")
+  vim.cmd("split")
+
+  -- Open style guide in bottom right
+  vim.cmd("wincmd j")
+  local style_guide = vim.fn.getcwd() .. "/Meta/Style Guide.md"
+  if vim.fn.filereadable(style_guide) == 1 then
+    vim.cmd("edit " .. vim.fn.fnameescape(style_guide))
+  end
+
+  -- Move to prose column (middle window) and open most recent chapter
+  vim.cmd("wincmd h")
+  local manuscript_dir = vim.fn.getcwd() .. "/Manuscript"
+  if vim.fn.isdirectory(manuscript_dir) == 1 then
+    -- Get all .md files sorted by modification time, newest first
+    local files = vim.fn.glob(manuscript_dir .. "/**/*.md", false, true)
+    if #files > 0 then
+      table.sort(files, function(a, b)
+        return vim.fn.getftime(a) > vim.fn.getftime(b)
+      end)
+      vim.cmd("edit " .. vim.fn.fnameescape(files[1]))
+      -- Trigger RO toggle to load the matching outline in top right
+      toggle_ro()
+      -- Return to prose column
+      vim.cmd("wincmd h")
+      vim.cmd("normal! G")
+    end
+  end
+  -- Close the file tree now that layout is set up
+  vim.cmd("NvimTreeClose")
+end
+
+vim.api.nvim_create_user_command("WritingLayout", open_writing_layout, {})
+vim.keymap.set("n", "<leader>W", ":WritingLayout<CR>", { desc = "Open writing layout" })
+

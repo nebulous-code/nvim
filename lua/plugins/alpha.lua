@@ -18,6 +18,7 @@ return {
 
     dashboard.section.buttons.val = {
       dashboard.button("D", "  Dev Environment", ":DevLayout<CR>"),
+      dashboard.button("W", "  Writing Layout", ":WritingLayout<CR>"),
       dashboard.button("t", "  Open Terminal",    ":terminal<CR>"),
       dashboard.button("e", "  File Explorer",    ":NvimTreeToggle<CR>"),
       dashboard.button("f", "  Search Files",    ":Telescope find_files<CR>"),
