@@ -9,6 +9,7 @@ return {
       { "<leader>d", group = "debug" },
 		  { "<leader>f", group = "find" },
       { "<leader>g", group = "git" },
+      { "<leader>k", group = "books" },
       { "<leader>m", group = "markdown" },
       { "<leader>P", group = "plugins" },
       { "<leader>p", group = "put with newline" },

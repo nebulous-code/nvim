@@ -29,6 +29,9 @@ vim.keymap.set("n", "<leader>d[", vim.diagnostic.goto_prev, { desc = "Previous d
 -- Misc
 vim.keymap.set("n", "<leader>/", ":noh<CR>", { desc = "Clear search" })
 
+-- Writing
+vim.keymap.set("i", "<C-l>", "—", { desc = "Insert emdash" })
+
 -- Plugins
 vim.keymap.set("n", "<leader>Pl", ":Lazy<CR>", { desc = "Lazy menu"})
 vim.keymap.set("n", "<leader>Pm", ":Mason<CR>", { desc = "Mason menu"})
@@ -276,8 +279,6 @@ local function open_writing_layout()
       vim.cmd("normal! G")
     end
   end
-  -- Close the file tree now that layout is set up
-  vim.cmd("NvimTreeClose")
 end
 
 vim.api.nvim_create_user_command("WritingLayout", open_writing_layout, {})
