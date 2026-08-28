@@ -14,6 +14,10 @@ local config = {
   store = vim.fn.stdpath("data") .. "/reading/recents.json",
   width = 80, -- text column, roughly a printed page
   margins = true,
+  scrolloff = 999, -- typewriter scrolling: the reading line stays centred
+  band = true, -- highlight the reading line and its neighbours
+  band_rows = 1, -- rows highlighted either side of the cursor
+  band_color = nil, -- background for the band; nil follows CursorLine
 }
 
 -- The book currently open in the reader
@@ -23,6 +27,7 @@ local state = {
   chapter = nil,
   margins = {},
   opening = false,
+  prev_scrolloff = nil,
 }
 
 -- Captured before we wrap it, so our own opens don't recurse
@@ -195,6 +200,41 @@ local function build_layout(width)
   return true
 end
 
+--- Reading band -----------------------------------------------------------
+
+local band_ns = vim.api.nvim_create_namespace("reading_band")
+
+local function define_band_hl()
+  if config.band_color then
+    vim.api.nvim_set_hl(0, "ReadingBand", { bg = config.band_color })
+  else
+    -- default = true so a colorscheme can override it
+    vim.api.nvim_set_hl(0, "ReadingBand", { link = "CursorLine", default = true })
+  end
+end
+
+-- line_hl_group paints the full width of the window, so the band runs the
+-- whole text column rather than stopping at the end of the text.
+local function draw_band()
+  if not (config.band and state.bufnr and vim.api.nvim_buf_is_valid(state.bufnr)) then
+    return
+  end
+  local win = vim.fn.bufwinid(state.bufnr)
+  if win == -1 then
+    return
+  end
+  vim.api.nvim_buf_clear_namespace(state.bufnr, band_ns, 0, -1)
+  local count = vim.api.nvim_buf_line_count(state.bufnr)
+  local cursor = vim.api.nvim_win_get_cursor(win)[1]
+  local first = math.max(1, cursor - config.band_rows)
+  local last = math.min(count, cursor + config.band_rows)
+  for line = first, last do
+    pcall(vim.api.nvim_buf_set_extmark, state.bufnr, band_ns, line - 1, 0, {
+      line_hl_group = "ReadingBand",
+    })
+  end
+end
+
 --- Position ----------------------------------------------------------------
 
 local function current_line()
@@ -240,11 +280,26 @@ local function attach_autocmds()
       buffer = state.bufnr,
       callback = function(ev)
         save_position()
+        vim.api.nvim_buf_clear_namespace(state.bufnr, band_ns, 0, -1)
         -- Not while another book is being opened into the same layout
         if ev.event == "BufWinLeave" and not state.opening then
           close_margins()
+          if state.prev_scrolloff then
+            local win = vim.fn.bufwinid(state.bufnr)
+            if win ~= -1 then
+              vim.wo[win].scrolloff = state.prev_scrolloff
+            end
+            state.prev_scrolloff = nil
+          end
         end
       end,
+    })
+  end
+  if state.bufnr then
+    vim.api.nvim_create_autocmd({ "CursorMoved", "BufEnter" }, {
+      group = group,
+      buffer = state.bufnr,
+      callback = draw_band,
     })
   end
   vim.api.nvim_create_autocmd("VimLeavePre", {
@@ -340,9 +395,18 @@ function M.open(path, opts)
   state.path = abs
   state.chapter = opts.chapter or read_plugin_chapter(abs) or 1
 
+  -- Typewriter scrolling. Window-local, and restored on the way out so the
+  -- window does not keep it once you are back to editing.
+  if config.scrolloff then
+    local win = vim.api.nvim_get_current_win()
+    state.prev_scrolloff = vim.wo[win].scrolloff
+    vim.wo[win].scrolloff = config.scrolloff
+  end
+
   restore_line(opts.line)
   record(abs, state.chapter, opts.line)
   attach_autocmds()
+  vim.schedule(draw_band)
 
   -- The contents list is on <leader>kt now, so give gt back to vim
   pcall(vim.api.nvim_buf_del_keymap, state.bufnr, "n", "gt")
@@ -475,6 +539,12 @@ function M.setup(opts)
   end
 
   wrap_navigation()
+
+  define_band_hl()
+  vim.api.nvim_create_autocmd("ColorScheme", {
+    group = vim.api.nvim_create_augroup("ReadingBandHl", { clear = true }),
+    callback = define_band_hl,
+  })
 end
 
 return M

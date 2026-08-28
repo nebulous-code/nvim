@@ -50,6 +50,7 @@ return {
     require("reading.recents").setup({
       library = "/malory/books/Calibre Library",
       limit = 5,
+      band_color = "#8b7449",
     })
   end,
 }
