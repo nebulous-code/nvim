@@ -12,6 +12,8 @@ local config = {
   library = nil,
   limit = 5,
   store = vim.fn.stdpath("data") .. "/reading/recents.json",
+  width = 80, -- text column, roughly a printed page
+  margins = true,
 }
 
 -- The book currently open in the reader
@@ -19,6 +21,8 @@ local state = {
   bufnr = nil,
   path = nil,
   chapter = nil,
+  margins = {},
+  opening = false,
 }
 
 -- Captured before we wrap it, so our own opens don't recurse
@@ -96,6 +100,101 @@ local function write_plugin_chapter(path, chapter)
   vim.fn.writefile({ vim.json.encode({ last_chapter = chapter }) }, file)
 end
 
+--- Centered reading layout -------------------------------------------------
+
+-- One scratch buffer is shared by both margin windows
+local margin_bufnr = nil
+
+local function margin_buffer()
+  if margin_bufnr and vim.api.nvim_buf_is_valid(margin_bufnr) then
+    return margin_bufnr
+  end
+  margin_bufnr = vim.api.nvim_create_buf(false, true)
+  vim.bo[margin_bufnr].buftype = "nofile"
+  vim.bo[margin_bufnr].bufhidden = "hide"
+  vim.bo[margin_bufnr].swapfile = false
+  vim.bo[margin_bufnr].modifiable = false
+  return margin_bufnr
+end
+
+local function quiet_window(win)
+  local opts = {
+    number = false,
+    relativenumber = false,
+    cursorline = false,
+    signcolumn = "no",
+    foldcolumn = "0",
+    list = false,
+    spell = false,
+  }
+  for name, value in pairs(opts) do
+    pcall(vim.api.nvim_set_option_value, name, value, { win = win })
+  end
+end
+
+local function close_margins()
+  for _, win in ipairs(state.margins) do
+    if vim.api.nvim_win_is_valid(win) then
+      pcall(vim.api.nvim_win_close, win, true)
+    end
+  end
+  state.margins = {}
+end
+
+-- Three columns, empty margins either side of the text. The plugin wraps to
+-- whichever window is current when the book opens, so the centre window has to
+-- exist and be sized before we hand off -- resizing afterwards does not reflow.
+local function build_layout(width)
+  close_margins()
+  -- The two vertical separators each take a column, so discount them or the
+  -- right margin comes up short and the text sits off-centre.
+  local margin = math.floor((vim.o.columns - width - 2) / 2)
+  if margin < 8 then
+    return false -- screen too narrow; read full width rather than pretend
+  end
+
+  local center = vim.api.nvim_get_current_win()
+
+  vim.cmd("aboveleft vsplit")
+  local left = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_set_buf(left, margin_buffer())
+
+  vim.api.nvim_set_current_win(center)
+  vim.cmd("belowright vsplit")
+  local right = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_set_buf(right, margin_buffer())
+
+  vim.api.nvim_set_current_win(center)
+  for _, win in ipairs({ left, center, right }) do
+    quiet_window(win)
+  end
+
+  -- Size the margins and let the text column take what is left. Forcing the
+  -- centre width instead makes vim rob one margin to pay the other, which
+  -- collapses the right side on narrower screens. equalalways off stops it
+  -- re-spreading them afterwards.
+  local equalalways = vim.o.equalalways
+  vim.o.equalalways = false
+  -- Splits inherit winfixwidth from the window they came from, so a layout
+  -- built after a previous one would refuse to resize. Clear it first.
+  for _, win in ipairs({ left, center, right }) do
+    vim.wo[win].winfixwidth = false
+  end
+  -- Two passes: resizing one margin shifts the other, so a single pass leaves
+  -- the text off-centre at some widths. The second pass converges.
+  for _ = 1, 2 do
+    vim.api.nvim_win_set_width(left, margin)
+    vim.api.nvim_win_set_width(right, margin)
+  end
+  for _, win in ipairs({ left, center, right }) do
+    vim.wo[win].winfixwidth = true
+  end
+  vim.o.equalalways = equalalways
+
+  state.margins = { left, right }
+  return true
+end
+
 --- Position ----------------------------------------------------------------
 
 local function current_line()
@@ -139,7 +238,13 @@ local function attach_autocmds()
     vim.api.nvim_create_autocmd({ "BufLeave", "BufWinLeave" }, {
       group = group,
       buffer = state.bufnr,
-      callback = save_position,
+      callback = function(ev)
+        save_position()
+        -- Not while another book is being opened into the same layout
+        if ev.event == "BufWinLeave" and not state.opening then
+          close_margins()
+        end
+      end,
     })
   end
   vim.api.nvim_create_autocmd("VimLeavePre", {
@@ -219,7 +324,17 @@ function M.open(path, opts)
   -- plugin_open -- otherwise we would call our own wrapper and recurse.
   local epub = require("epub")
   local open = plugin_open or epub.open_epub
-  open(abs)
+
+  state.opening = true
+  if config.margins then
+    build_layout(config.width)
+  end
+  local ok, err = pcall(open, abs)
+  state.opening = false
+  if not ok then
+    vim.notify("Could not open book: " .. tostring(err), vim.log.levels.ERROR)
+    return
+  end
 
   state.bufnr = vim.api.nvim_get_current_buf()
   state.path = abs
@@ -228,6 +343,35 @@ function M.open(path, opts)
   restore_line(opts.line)
   record(abs, state.chapter, opts.line)
   attach_autocmds()
+
+  -- The contents list is on <leader>kt now, so give gt back to vim
+  pcall(vim.api.nvim_buf_del_keymap, state.bufnr, "n", "gt")
+end
+
+---Show the table of contents for the open book.
+function M.toc()
+  if not (state.bufnr and vim.api.nvim_buf_is_valid(state.bufnr)) then
+    vim.notify("No book open", vim.log.levels.INFO)
+    return
+  end
+  require("epub.view").show_toc()
+end
+
+---Move a chapter forward or back in the open book.
+local function chapter_step(fn)
+  if not (state.bufnr and vim.api.nvim_buf_is_valid(state.bufnr)) then
+    vim.notify("No book open", vim.log.levels.INFO)
+    return
+  end
+  require("epub.view")[fn]()
+end
+
+function M.next_chapter()
+  chapter_step("next_chapter")
+end
+
+function M.prev_chapter()
+  chapter_step("prev_chapter")
 end
 
 ---Reopen the most recently read book where you left off.

@@ -17,11 +17,32 @@ return {
       desc = "Open book from library",
     },
     {
-      "<leader>kl",
+      "<leader>kt",
+      function()
+        require("reading.recents").toc()
+      end,
+      desc = "Table of contents",
+    },
+    {
+      "<leader>kb",
       function()
         require("reading.recents").pick_recent()
       end,
-      desc = "List recent books",
+      desc = "Browse recent books",
+    },
+    {
+      "<leader>kl",
+      function()
+        require("reading.recents").next_chapter()
+      end,
+      desc = "Next chapter",
+    },
+    {
+      "<leader>kh",
+      function()
+        require("reading.recents").prev_chapter()
+      end,
+      desc = "Previous chapter",
     },
   },
   config = function()
