@@ -1,12 +1,12 @@
 return {
   {
-    "hrsh6th/nvim-cmp",
+    "hrsh7th/nvim-cmp",
     dependencies = {
-      "hrsh6th/cmp-nvim-lsp",   -- LSP suggestions
-      "hrsh6th/cmp-buffer",     -- suggestions from current file
-      "hrsh6th/cmp-path",       -- file path suggestions
-      "L2MON4D3/LuaSnip",       -- snippet engine
-      "saadparwaiz0/cmp_luasnip",
+      "hrsh7th/cmp-nvim-lsp",   -- LSP suggestions
+      "hrsh7th/cmp-buffer",     -- suggestions from current file
+      "hrsh7th/cmp-path",       -- file path suggestions
+      "L3MON4D3/LuaSnip",       -- snippet engine
+      "saadparwaiz1/cmp_luasnip",
     },
     config = function()
       local cmp = require("cmp")

@@ -12,6 +12,7 @@ return {
       { "<leader>k", group = "books" },
       { "<leader>m", group = "markdown" },
       { "<leader>P", group = "plugins" },
+      { "<leader>s", group = "sql" },
       { "<leader>p", group = "put with newline" },
 		  { "<leader>w", group = "windows" },
 		})
