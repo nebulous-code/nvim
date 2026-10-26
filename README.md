@@ -56,6 +56,8 @@ This sets:
 nvim/
 ├── init.lua              # Entry point — keymaps, settings, lazy bootstrap
 ├── setup-env.ps1         # Windows env variable setup script
+├── docs/
+│   └── writing-project-setup.md   # Directory and file naming a manuscript repo needs
 └── lua/
     └── plugins/
         ├── alpha.lua         # Splash screen

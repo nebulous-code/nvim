@@ -11,6 +11,7 @@ return {
       { "<leader>g", group = "git" },
       { "<leader>k", group = "books" },
       { "<leader>m", group = "markdown" },
+      { "<leader>o", group = "pomodoro" },
       { "<leader>P", group = "plugins" },
       { "<leader>s", group = "sql" },
       { "<leader>p", group = "put with newline" },

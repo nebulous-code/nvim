@@ -22,6 +22,11 @@ return {
           "encoding",
           "fileformat",
           "filetype",
+          {
+            function()
+              return require("pomodoro").statusline()
+            end,
+          },
         },
       },
     })
